@@ -1,72 +1,91 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/color_game.dart';
-import '../widgets/color_display.dart';
-import '../widgets/color_palette.dart';
-import '../widgets/game_controls.dart';
-import '../widgets/difficulty_selector.dart';
-import '../constants/game_constants.dart';
+import 'package:color_mixer_game/constants/app_colors.dart';
+import 'package:color_mixer_game/constants/difficulty_settings.dart';
+import 'package:color_mixer_game/models/color_game.dart';
+import 'package:color_mixer_game/widgets/color_display.dart';
+import 'package:color_mixer_game/widgets/color_palette.dart';
+import 'package:color_mixer_game/widgets/game_controls.dart';
+import 'package:color_mixer_game/widgets/difficulty_selector.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final colorGameModel = Provider.of<ColorGameModel>(context);
-    final screenSize = MediaQuery.of(context).size;
-    final isSmallScreen = screenSize.width < 360;
-
+    final colorGame = Provider.of<ColorGame>(context);
+    
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Color Mixer Game',
-          style: TextStyle(
-            fontSize: isSmallScreen ? 18.0 : 22.0,
-            fontWeight: FontWeight.bold,
+        title: const Text('Color Mixer Game'),
+        centerTitle: true,
+        actions: [
+          DifficultySelector(
+            currentDifficulty: colorGame.currentDifficulty,
+            onDifficultySelected: (difficulty) {
+              colorGame.setDifficulty(difficulty);
+            },
           ),
-        ),
-        actions: const [
-          DifficultySelector(),
         ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Center(
-              child: Container(
-                constraints: const BoxConstraints(maxWidth: 800),
-                decoration: BoxDecoration(
-                  color: kGameContainerColor,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
-                      spreadRadius: 1,
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+            child: Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20.0),
+                  decoration: BoxDecoration(
+                    color: AppColors.gameContainerColor,
+                    borderRadius: BorderRadius.circular(8.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.15),
+                        offset: const Offset(0, 4),
+                        blurRadius: 12.0,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Color Display Section
+                      ColorDisplay(
+                        yourMixColor: colorGame.currentMixedColor,
+                        targetColor: colorGame.targetColor,
+                        matchPercentage: colorGame.matchPercentage,
+                        showSuccessMessage: colorGame.showSuccessMessage,
+                        showSolutionMessage: colorGame.showSolutionMessage,
+                      ),
+                      
+                      const SizedBox(height: 24.0),
+                      
+                      // Color Palette Section
+                      ColorPalette(
+                        visibleColorsCount: colorGame.visibleColorsCount,
+                        colorAmounts: colorGame.colorAmounts,
+                        colorPercentages: List.generate(
+                          AppColors.baseColors.length, 
+                          (i) => colorGame.getColorPercentage(i),
+                        ),
+                        onColorAdd: (index) => colorGame.addColor(index),
+                        onColorRemove: (index) => colorGame.removeColor(index),
+                      ),
+                      
+                      const SizedBox(height: 24.0),
+                      
+                      // Game Controls Section
+                      GameControls(
+                        onReset: () => colorGame.resetMix(),
+                        onSolution: () => colorGame.showSolution(),
+                        onNextColor: () => colorGame.generateTargetColor(),
+                      ),
+                    ],
+                  ),
                 ),
-                padding: EdgeInsets.all(isSmallScreen ? 16.0 : 24.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Color Display Area (Your Mix and Target)
-                    const ColorDisplay(),
-                    
-                    SizedBox(height: isSmallScreen ? 24.0 : 30.0),
-                    
-                    // Base Color Palette
-                    const ColorPalette(),
-                    
-                    SizedBox(height: isSmallScreen ? 20.0 : 28.0),
-                    
-                    // Controls Area (Reset, Solution, Next buttons)
-                    const GameControls(),
-                  ],
-                ),
-              ),
+              ],
             ),
           ),
         ),

@@ -1,107 +1,81 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../models/color_game.dart';
+import 'package:color_mixer_game/constants/difficulty_settings.dart';
 
-class DifficultySelector extends StatefulWidget {
-  const DifficultySelector({Key? key}) : super(key: key);
+class DifficultySelector extends StatelessWidget {
+  final DifficultyLevel currentDifficulty;
+  final Function(DifficultyLevel) onDifficultySelected;
 
-  @override
-  State<DifficultySelector> createState() => _DifficultySelectorState();
-}
-
-class _DifficultySelectorState extends State<DifficultySelector> {
-  bool _isExpanded = false;
+  const DifficultySelector({
+    Key? key,
+    required this.currentDifficulty,
+    required this.onDifficultySelected,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final colorGameModel = Provider.of<ColorGameModel>(context);
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 360;
-    
-    // Get difficulty display name with first letter capitalized
-    String getDifficultyDisplayName(String difficulty) {
-      return difficulty[0].toUpperCase() + difficulty.substring(1);
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      child: PopupMenuButton<String>(
-        onSelected: (String difficulty) {
-          colorGameModel.setDifficulty(difficulty);
-        },
-        itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-          PopupMenuItem<String>(
-            value: 'easy',
-            child: Text(
-              'Easy',
-              style: TextStyle(
-                color: colorGameModel.currentDifficulty == 'easy'
-                    ? Theme.of(context).primaryColor
-                    : Colors.black,
-                fontWeight: colorGameModel.currentDifficulty == 'easy'
-                    ? FontWeight.bold
-                    : FontWeight.normal,
+    return PopupMenuButton<DifficultyLevel>(
+      onSelected: onDifficultySelected,
+      itemBuilder: (context) => [
+        _buildMenuItem(context, DifficultyLevel.easy, 'Easy'),
+        _buildMenuItem(context, DifficultyLevel.medium, 'Medium'),
+        _buildMenuItem(context, DifficultyLevel.hard, 'Hard'),
+      ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              _getDifficultyText(),
+              style: const TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w500,
               ),
             ),
-          ),
-          PopupMenuItem<String>(
-            value: 'medium',
-            child: Text(
-              'Medium',
-              style: TextStyle(
-                color: colorGameModel.currentDifficulty == 'medium'
-                    ? Theme.of(context).primaryColor
-                    : Colors.black,
-                fontWeight: colorGameModel.currentDifficulty == 'medium'
-                    ? FontWeight.bold
-                    : FontWeight.normal,
-              ),
+            const SizedBox(width: 4.0),
+            const Icon(
+              Icons.arrow_drop_down,
+              size: 20.0,
             ),
-          ),
-          PopupMenuItem<String>(
-            value: 'hard',
-            child: Text(
-              'Hard',
-              style: TextStyle(
-                color: colorGameModel.currentDifficulty == 'hard'
-                    ? Theme.of(context).primaryColor
-                    : Colors.black,
-                fontWeight: colorGameModel.currentDifficulty == 'hard'
-                    ? FontWeight.bold
-                    : FontWeight.normal,
-              ),
-            ),
-          ),
-        ],
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: isSmallScreen ? 10.0 : 15.0,
-            vertical: 8.0,
-          ),
-          decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor,
-            borderRadius: BorderRadius.circular(4.0),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Difficulty',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: isSmallScreen ? 14.0 : 16.0,
-                ),
-              ),
-              const SizedBox(width: 5.0),
-              const Icon(
-                Icons.arrow_drop_down,
-                color: Colors.white,
-                size: 20.0,
-              ),
-            ],
-          ),
+          ],
         ),
       ),
     );
+  }
+
+  PopupMenuItem<DifficultyLevel> _buildMenuItem(
+    BuildContext context,
+    DifficultyLevel level,
+    String text,
+  ) {
+    return PopupMenuItem<DifficultyLevel>(
+      value: level,
+      child: Row(
+        children: [
+          if (currentDifficulty == level)
+            const Icon(
+              Icons.check,
+              size: 18.0,
+              color: Colors.blue,
+            ),
+          if (currentDifficulty == level)
+            const SizedBox(width: 8.0),
+          Text(text),
+        ],
+      ),
+    );
+  }
+
+  String _getDifficultyText() {
+    switch (currentDifficulty) {
+      case DifficultyLevel.easy:
+        return 'Easy';
+      case DifficultyLevel.medium:
+        return 'Medium';
+      case DifficultyLevel.hard:
+        return 'Hard';
+      default:
+        return 'Medium';
+    }
   }
 }

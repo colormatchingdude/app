@@ -1,187 +1,200 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../constants/game_constants.dart';
-import '../utils/color_utils.dart';
+import 'package:color_mixer_game/constants/app_colors.dart';
+import 'package:color_mixer_game/constants/difficulty_settings.dart';
+import 'package:color_mixer_game/utils/color_utils.dart';
 
-class ColorGameModel extends ChangeNotifier {
+class ColorGame extends ChangeNotifier {
   // Current difficulty level
-  String _currentDifficulty = 'medium';
-  
-  // Color amounts for each base color
-  List<int> _colorAmounts = [];
-  
-  // Target color components
+  DifficultyLevel _currentDifficulty = DifficultyLevel.medium;
+  DifficultyLevel get currentDifficulty => _currentDifficulty;
+
+  // Base colors and amounts
+  final List<int> _colorAmounts = List<int>.filled(AppColors.baseColors.length, 0);
+  List<int> get colorAmounts => List<int>.from(_colorAmounts);
+
+  // Target color and ratios
   Color _targetColor = Colors.grey;
-  
-  // Target color ratios (for solution)
-  List<int> _targetColorRatios = [];
-  
-  // Current mixed color
-  Color _mixedColor = Colors.transparent;
-  
-  // Match percentage
-  double _matchPercentage = 0.0;
-  
-  // Random number generator
-  final Random _random = Random();
-  
-  // Getters
-  String get currentDifficulty => _currentDifficulty;
-  List<int> get colorAmounts => _colorAmounts;
   Color get targetColor => _targetColor;
-  Color get mixedColor => _mixedColor;
+
+  List<int> _targetColorRatios = [];
+  List<int> get targetColorRatios => List<int>.from(_targetColorRatios);
+
+  // Current match percentage
+  double _matchPercentage = 0;
   double get matchPercentage => _matchPercentage;
-  List<int> get targetColorRatios => _targetColorRatios;
-  
-  // Number of visible base colors based on difficulty
-  int get visibleBaseColors => 
-      difficultySettings[_currentDifficulty]!['visibleBaseColors'] as int;
-  
-  // Constructor
-  ColorGameModel() {
-    // Initialize color amounts array with zeros
-    _colorAmounts = List.filled(baseColors.length, 0);
+
+  // Success message flag
+  bool _showSuccessMessage = false;
+  bool get showSuccessMessage => _showSuccessMessage;
+
+  // Solution message flag
+  bool _showSolutionMessage = false;
+  bool get showSolutionMessage => _showSolutionMessage;
+
+  // Current mixed color
+  Color _currentMixedColor = Colors.transparent;
+  Color get currentMixedColor => _currentMixedColor;
+
+  // Constructor - initialize with a new target color
+  ColorGame() {
+    generateTargetColor();
+  }
+
+  // Change difficulty level
+  void setDifficulty(DifficultyLevel difficulty) {
+    _currentDifficulty = difficulty;
+    resetMix();
+    generateTargetColor();
+    notifyListeners();
+  }
+
+  // Add color
+  void addColor(int index) {
+    if (index >= 0 && index < _colorAmounts.length) {
+      _colorAmounts[index]++;
+      _updateMixedColor();
+      notifyListeners();
+    }
+  }
+
+  // Remove color
+  void removeColor(int index) {
+    if (index >= 0 && index < _colorAmounts.length && _colorAmounts[index] > 0) {
+      _colorAmounts[index]--;
+      _updateMixedColor();
+      notifyListeners();
+    }
+  }
+
+  // Reset the mix
+  void resetMix() {
+    for (int i = 0; i < _colorAmounts.length; i++) {
+      _colorAmounts[i] = 0;
+    }
+    _currentMixedColor = Colors.transparent;
+    _matchPercentage = 0;
+    _showSuccessMessage = false;
+    _showSolutionMessage = false;
+    notifyListeners();
+  }
+
+  // Generate a new target color
+  void generateTargetColor() {
+    resetMix();
     
-    // Generate the first target color
-    _generateTargetColor();
-  }
-  
-  // Set difficulty level
-  void setDifficulty(String difficulty) {
-    if (difficultySettings.containsKey(difficulty)) {
-      _currentDifficulty = difficulty;
-      _resetGame();
-      
-      // Generate a new target color appropriate for this difficulty
-      _generateTargetColor();
-      
-      notifyListeners();
+    final settings = DifficultySettings.getSettings(_currentDifficulty);
+    
+    // Reset target color ratios
+    _targetColorRatios = List<int>.filled(AppColors.baseColors.length, 0);
+    
+    // Select random number of colors to use
+    final Random random = Random();
+    final int numColorsToUse = settings.minColors + 
+                              random.nextInt(settings.maxColors - settings.minColors + 1);
+    
+    // Available colors for current difficulty
+    final int availableColors = settings.visibleBaseColors;
+    
+    // Randomly pick which colors to use
+    final List<int> colorIndices = [];
+    while (colorIndices.length < numColorsToUse) {
+      final int index = random.nextInt(availableColors);
+      if (!colorIndices.contains(index)) {
+        colorIndices.add(index);
+      }
     }
-  }
-  
-  // Add a color amount
-  void addColor(int colorIndex) {
-    if (colorIndex >= 0 && colorIndex < _colorAmounts.length) {
-      _colorAmounts[colorIndex]++;
-      _updateMixedColor();
-      notifyListeners();
+    
+    // Assign random weights
+    int totalWeight = 0;
+    for (final index in colorIndices) {
+      final int weight = settings.minWeights + 
+                        random.nextInt(settings.maxWeights - settings.minWeights + 1);
+      _targetColorRatios[index] = weight;
+      totalWeight += weight;
     }
-  }
-  
-  // Subtract a color amount
-  void subtractColor(int colorIndex) {
-    if (colorIndex >= 0 && colorIndex < _colorAmounts.length && _colorAmounts[colorIndex] > 0) {
-      _colorAmounts[colorIndex]--;
-      _updateMixedColor();
-      notifyListeners();
+    
+    // Calculate mixed color
+    double r = 0, g = 0, b = 0;
+    for (int i = 0; i < _targetColorRatios.length; i++) {
+      if (_targetColorRatios[i] > 0) {
+        final color = AppColors.baseColors[i].color;
+        final proportion = _targetColorRatios[i] / totalWeight;
+        r += color.red * proportion;
+        g += color.green * proportion;
+        b += color.blue * proportion;
+      }
     }
-  }
-  
-  // Reset the game (clear all colors)
-  void resetGame() {
-    _resetGame();
+    
+    _targetColor = Color.fromRGBO(r.round(), g.round(), b.round(), 1.0);
     notifyListeners();
   }
-  
-  // Internal reset method
-  void _resetGame() {
-    _colorAmounts = List.filled(baseColors.length, 0);
-    _mixedColor = Colors.transparent;
-    _matchPercentage = 0.0;
-  }
-  
-  // Generate next target color
-  void nextTargetColor() {
-    _resetGame();
-    _generateTargetColor();
-    notifyListeners();
-  }
-  
+
   // Show solution
   void showSolution() {
-    _colorAmounts = List.from(_targetColorRatios);
+    // Copy target ratios to current amounts
+    for (int i = 0; i < _targetColorRatios.length; i++) {
+      _colorAmounts[i] = _targetColorRatios[i];
+    }
+    
     _updateMixedColor();
+    _showSolutionMessage = true;
+    
+    // Hide solution message after 3 seconds
+    Future.delayed(const Duration(seconds: 3), () {
+      _showSolutionMessage = false;
+      notifyListeners();
+    });
+    
     notifyListeners();
   }
-  
-  // Generate a random target color
-  void _generateTargetColor() {
-    final difficulty = difficultySettings[_currentDifficulty]!;
-    final numColorsRange = difficulty['numColors'] as Map<String, dynamic>;
-    final weightsRange = difficulty['weightsRange'] as Map<String, dynamic>;
-    final visibleColors = difficulty['visibleBaseColors'] as int;
-    
-    // Determine how many base colors to use for this target
-    final numColors = _random.nextInt(
-        numColorsRange['max'] - numColorsRange['min'] + 1) + 
-        numColorsRange['min'];
-    
-    // Create a temporary list for target ratios
-    final tempRatios = List.filled(baseColors.length, 0);
-    
-    // Choose random base colors and weights, only from the visible colors for this difficulty
-    final availableIndices = List.generate(visibleColors, (i) => i);
-    availableIndices.shuffle(_random);
-    
-    // Use only the first numColors indices
-    for (int i = 0; i < numColors; i++) {
-      final colorIndex = availableIndices[i];
-      final weight = _random.nextInt(
-          weightsRange['max'] - weightsRange['min'] + 1) + 
-          weightsRange['min'];
-      tempRatios[colorIndex] = weight;
-    }
-    
-    // Store the target ratios for solution
-    _targetColorRatios = List.from(tempRatios);
-    
-    // Create the list of colors and their amounts for mixing
-    final colors = <Color>[];
-    final amounts = <int>[];
-    
-    for (int i = 0; i < tempRatios.length; i++) {
-      if (tempRatios[i] > 0) {
-        colors.add(baseColors[i]['color']);
-        amounts.add(tempRatios[i]);
-      }
-    }
-    
-    // Mix the colors to get the target
-    _targetColor = ColorUtils.mixColors(colors, amounts);
-  }
-  
-  // Update the mixed color based on current amounts
+
+  // Update mixed color and match percentage
   void _updateMixedColor() {
-    final visibleColors = difficultySettings[_currentDifficulty]!['visibleBaseColors'] as int;
+    int totalAmount = _colorAmounts.fold(0, (sum, amount) => sum + amount);
     
-    // Create lists of visible colors and their amounts
-    final colors = <Color>[];
-    final amounts = <int>[];
-    
-    // Only include the visible colors for the current difficulty
-    for (int i = 0; i < visibleColors; i++) {
-      if (_colorAmounts[i] > 0) {
-        colors.add(baseColors[i]['color']);
-        amounts.add(_colorAmounts[i]);
-      }
-    }
-    
-    // Mix the colors
-    _mixedColor = ColorUtils.mixColors(colors, amounts);
-    
-    // Calculate the match percentage
-    _calculateMatchPercentage();
-  }
-  
-  // Calculate how closely the mixed color matches the target
-  void _calculateMatchPercentage() {
-    // If no colors added, match is 0
-    final totalAmount = _colorAmounts.fold(0, (sum, amount) => sum + amount);
     if (totalAmount == 0) {
-      _matchPercentage = 0.0;
+      _currentMixedColor = Colors.transparent;
+      _matchPercentage = 0;
+      _showSuccessMessage = false;
       return;
     }
     
-    _matchPercentage = ColorUtils.calculateMatchPercentage(_mixedColor, _targetColor);
+    // Calculate mixed color
+    double r = 0, g = 0, b = 0;
+    for (int i = 0; i < _colorAmounts.length; i++) {
+      if (_colorAmounts[i] > 0) {
+        final color = AppColors.baseColors[i].color;
+        final proportion = _colorAmounts[i] / totalAmount;
+        r += color.red * proportion;
+        g += color.green * proportion;
+        b += color.blue * proportion;
+      }
+    }
+    
+    _currentMixedColor = Color.fromRGBO(r.round(), g.round(), b.round(), 1.0);
+    
+    // Calculate match percentage
+    _matchPercentage = ColorUtils.calculateColorMatch(
+      _currentMixedColor, 
+      _targetColor
+    );
+    
+    // Show success message if match is 99% or higher
+    _showSuccessMessage = _matchPercentage >= 99;
+  }
+
+  // Get number of visible colors based on difficulty
+  int get visibleColorsCount {
+    return DifficultySettings.getSettings(_currentDifficulty).visibleBaseColors;
+  }
+
+  // Get percentage for a specific color
+  double getColorPercentage(int index) {
+    final totalAmount = _colorAmounts.fold(0, (sum, amount) => sum + amount);
+    if (totalAmount == 0 || _colorAmounts[index] == 0) {
+      return 0;
+    }
+    return (_colorAmounts[index] / totalAmount) * 100;
   }
 }
