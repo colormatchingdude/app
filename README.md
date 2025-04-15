@@ -47,4 +47,4 @@ This game is implemented using Flutter and follows a clean architecture:
 - **Medium**: 2-4 colors with weights 1-5, shows 5 base colors
 - **Hard**: 3-5 colors with weights 1-7, shows all 6 base colors
 
-Enjoy the game!
+Enjoy the game!# app
