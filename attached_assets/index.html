@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Mixer Game</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BD9SEZEH73"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-BD9SEZEH73');
+    </script>
+
+    <meta name="p:domain_verify" content="47c2e420e013c7bd8b94c174de35e7e3"/>
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4147807068955046"
+     crossorigin="anonymous"></script>
+    
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-logo">
+                <h1>Color Mixer Game</h1>
+            </div>
+            <div class="navbar-menu">
+                <div class="dropdown">
+                    <button class="dropdown-btn">Difficulty <span class="arrow-down">▼</span></button>
+                    <div class="dropdown-content">
+                        <a href="#" data-difficulty="easy">Easy</a>
+                        <a href="#" data-difficulty="medium">Medium</a>
+                        <a href="#" data-difficulty="hard">Hard</a>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-toggle">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="game-container">
+        <div class="color-display">
+            <div id="your-mix" class="color-box">
+                <div class="color-box-content">
+                    <div class="color-box-label">Your Mix</div>
+                    <div class="match-info">Match: <span id="match-percentage">0</span>%</div>
+                </div>
+            </div>
+            <div id="target-color" class="color-box">
+                 <div class="color-box-content">
+                     <div class="color-box-label">Target</div>
+                 </div>
+            </div>
+        </div>
+
+        <div id="base-color-palette" class="base-color-palette">
+            </div>
+
+        <div class="controls">
+            <div class="buttons">
+                <button id="reset-button">Reset</button>
+                <button id="solution-button">Solution</button>
+                <button id="next-button">Next</button>
+                <!-- Buy Me a Coffee Button -->
+                <a href="https://buymeacoffee.com/colormatchingdude" target="_blank" class="bmc-button">
+                    <img
+                    src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+                    alt="Buy Me A Coffee"
+                    class="bmc-img"
+                    />
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
