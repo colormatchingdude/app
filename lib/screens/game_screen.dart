@@ -6,7 +6,6 @@ import 'package:color_mixer_game/models/color_game.dart';
 import 'package:color_mixer_game/widgets/color_display.dart';
 import 'package:color_mixer_game/widgets/color_palette.dart';
 import 'package:color_mixer_game/widgets/game_controls.dart';
-import 'package:color_mixer_game/widgets/difficulty_selector.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({Key? key}) : super(key: key);
@@ -16,24 +15,26 @@ class GameScreen extends StatelessWidget {
     final colorGame = Provider.of<ColorGame>(context);
     
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Color Mixer Game'),
-        centerTitle: true,
-        actions: [
-          DifficultySelector(
-            currentDifficulty: colorGame.currentDifficulty,
-            onDifficultySelected: (difficulty) {
-              colorGame.setDifficulty(difficulty);
-            },
-          ),
-        ],
-      ),
+      // Removed AppBar
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
+                // Game title at the top
+                const Padding(
+                  padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
+                  child: Text(
+                    'Color Mixer Game',
+                    style: TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF333333),
+                    ),
+                  ),
+                ),
+                
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20.0),
@@ -76,11 +77,14 @@ class GameScreen extends StatelessWidget {
                       
                       const SizedBox(height: 24.0),
                       
-                      // Game Controls Section
+                      // Game Controls Section with difficulty button
                       GameControls(
                         onReset: () => colorGame.resetMix(),
                         onSolution: () => colorGame.showSolution(),
                         onNextColor: () => colorGame.generateTargetColor(),
+                        // Added difficulty info
+                        currentDifficulty: colorGame.currentDifficulty,
+                        onDifficultySelected: (difficulty) => colorGame.setDifficulty(difficulty),
                       ),
                     ],
                   ),

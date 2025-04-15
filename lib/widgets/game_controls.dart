@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:color_mixer_game/constants/app_colors.dart';
+import 'package:color_mixer_game/constants/difficulty_settings.dart';
 
 class GameControls extends StatelessWidget {
   final VoidCallback onReset;
   final VoidCallback onSolution;
   final VoidCallback onNextColor;
+  // Added difficulty parameters
+  final DifficultyLevel currentDifficulty;
+  final Function(DifficultyLevel) onDifficultySelected;
 
   const GameControls({
     Key? key,
     required this.onReset,
     required this.onSolution,
     required this.onNextColor,
+    required this.currentDifficulty,
+    required this.onDifficultySelected,
   }) : super(key: key);
 
   @override
@@ -33,6 +39,8 @@ class GameControls extends StatelessWidget {
           if (isNarrow) {
             return Column(
               children: [
+                _buildDifficultyButton(context),
+                const SizedBox(height: 12.0),
                 _buildResetButton(),
                 const SizedBox(height: 12.0),
                 _buildSolutionButton(),
@@ -41,9 +49,12 @@ class GameControls extends StatelessWidget {
               ],
             );
           } else {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+            return Wrap(
+              spacing: 12.0,
+              runSpacing: 12.0,
+              alignment: WrapAlignment.spaceEvenly,
               children: [
+                _buildDifficultyButton(context),
                 _buildResetButton(),
                 _buildSolutionButton(),
                 _buildNextButton(),
@@ -51,6 +62,61 @@ class GameControls extends StatelessWidget {
             );
           }
         },
+      ),
+    );
+  }
+
+  // New method to build the difficulty dropdown button
+  Widget _buildDifficultyButton(BuildContext context) {
+    return DropdownButton<DifficultyLevel>(
+      value: currentDifficulty,
+      onChanged: (value) {
+        if (value != null) {
+          onDifficultySelected(value);
+        }
+      },
+      underline: Container(),
+      items: [
+        _buildDropdownItem(DifficultyLevel.easy, 'Easy'),
+        _buildDropdownItem(DifficultyLevel.medium, 'Medium'),
+        _buildDropdownItem(DifficultyLevel.hard, 'Hard'),
+      ],
+      style: const TextStyle(
+        fontSize: 16.0,
+        fontWeight: FontWeight.w500,
+        color: Colors.white,
+      ),
+      dropdownColor: const Color(0xFF007BFF),
+      icon: const Icon(
+        Icons.arrow_drop_down,
+        color: Colors.white,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      isDense: true,
+      borderRadius: BorderRadius.circular(5.0),
+    );
+  }
+
+  // Helper method to build dropdown items
+  DropdownMenuItem<DifficultyLevel> _buildDropdownItem(
+    DifficultyLevel difficulty, 
+    String text
+  ) {
+    return DropdownMenuItem<DifficultyLevel>(
+      value: difficulty,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 24.0,
+          vertical: 12.0,
+        ),
+        child: Text(
+          text,
+          style: const TextStyle(
+            fontSize: 16.0,
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }

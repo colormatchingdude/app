@@ -36,8 +36,9 @@ class ColorGame extends ChangeNotifier {
   Color _currentMixedColor = Colors.transparent;
   Color get currentMixedColor => _currentMixedColor;
 
-  // Constructor - initialize with a new target color
+  // Constructor - initialize with Easy difficulty and new target color
   ColorGame() {
+    _currentDifficulty = DifficultyLevel.easy; // Default to Easy instead of Medium
     generateTargetColor();
   }
 
