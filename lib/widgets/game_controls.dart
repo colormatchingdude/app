@@ -33,47 +33,30 @@ class GameControls extends StatelessWidget {
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          // Use column layout for narrow screens, row for wider screens
-          final isNarrow = constraints.maxWidth < 500;
+          // Use a single row layout that adapts to screen width
+          final buttonWidth = (constraints.maxWidth / 4) - 12.0; // Divide available width by 4 buttons
           
-          if (isNarrow) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch, // Make buttons full width
-              children: [
-                _buildDifficultyButton(context),
-                const SizedBox(height: 12.0),
-                _buildResetButton(),
-                const SizedBox(height: 12.0),
-                _buildSolutionButton(),
-                const SizedBox(height: 12.0),
-                _buildNextButton(),
-              ],
-            );
-          } else {
-            return Wrap(
-              spacing: 16.0, // Increase spacing between buttons
-              runSpacing: 16.0,
-              alignment: WrapAlignment.spaceEvenly,
-              children: [
-                SizedBox(
-                  width: 120.0, // Fixed width for the difficulty button
-                  child: _buildDifficultyButton(context),
-                ),
-                SizedBox(
-                  width: 120.0, // Fixed width for other buttons for consistency
-                  child: _buildResetButton(),
-                ),
-                SizedBox(
-                  width: 120.0,
-                  child: _buildSolutionButton(),
-                ),
-                SizedBox(
-                  width: 120.0,
-                  child: _buildNextButton(),
-                ),
-              ],
-            );
-          }
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              SizedBox(
+                width: buttonWidth,
+                child: _buildDifficultyButton(context),
+              ),
+              SizedBox(
+                width: buttonWidth,
+                child: _buildResetButton(),
+              ),
+              SizedBox(
+                width: buttonWidth,
+                child: _buildSolutionButton(),
+              ),
+              SizedBox(
+                width: buttonWidth,
+                child: _buildNextButton(),
+              ),
+            ],
+          );
         },
       ),
     );
@@ -150,9 +133,10 @@ class GameControls extends StatelessWidget {
     backgroundColor: Colors.black, // Black background
     foregroundColor: Colors.white, // White text
     padding: const EdgeInsets.symmetric(
-      horizontal: 24.0,
+      horizontal: 8.0, // Reduced horizontal padding for better fit
       vertical: 12.0,
     ),
+    minimumSize: const Size(10, 48.0), // Match height with dropdown
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(5.0),
       side: const BorderSide(color: Colors.white, width: 1.0), // White border
