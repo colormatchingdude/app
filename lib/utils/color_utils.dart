@@ -17,7 +17,8 @@ class ColorUtils {
     // Calculate match percentage (100% - normalized distance)
     final matchPercentage = max(0, 100 * (1 - distance / maxDistance));
     
-    return matchPercentage;
+    // Explicitly return as double
+    return matchPercentage.toDouble();
   }
 
   /// Determine if a color is dark (for text contrast)
