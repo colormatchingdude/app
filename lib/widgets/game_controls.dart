@@ -68,32 +68,40 @@ class GameControls extends StatelessWidget {
 
   // New method to build the difficulty dropdown button
   Widget _buildDifficultyButton(BuildContext context) {
-    return DropdownButton<DifficultyLevel>(
-      value: currentDifficulty,
-      onChanged: (value) {
-        if (value != null) {
-          onDifficultySelected(value);
-        }
-      },
-      underline: Container(),
-      items: [
-        _buildDropdownItem(DifficultyLevel.easy, 'Easy'),
-        _buildDropdownItem(DifficultyLevel.medium, 'Medium'),
-        _buildDropdownItem(DifficultyLevel.hard, 'Hard'),
-      ],
-      style: const TextStyle(
-        fontSize: 16.0,
-        fontWeight: FontWeight.w500,
-        color: Colors.white,
+    // Create a custom button with dropdown
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black,
+        border: Border.all(color: Colors.white, width: 1.0),
+        borderRadius: BorderRadius.circular(5.0),
       ),
-      dropdownColor: const Color(0xFF007BFF),
-      icon: const Icon(
-        Icons.arrow_drop_down,
-        color: Colors.white,
+      child: DropdownButton<DifficultyLevel>(
+        value: currentDifficulty,
+        onChanged: (value) {
+          if (value != null) {
+            onDifficultySelected(value);
+          }
+        },
+        underline: Container(), // Remove default underline
+        items: [
+          _buildDropdownItem(DifficultyLevel.easy, 'Easy'),
+          _buildDropdownItem(DifficultyLevel.medium, 'Medium'),
+          _buildDropdownItem(DifficultyLevel.hard, 'Hard'),
+        ],
+        style: const TextStyle(
+          fontSize: 16.0,
+          fontWeight: FontWeight.w500,
+          color: Colors.white,
+        ),
+        dropdownColor: Colors.black, // Black background for dropdown
+        icon: const Icon(
+          Icons.arrow_drop_down,
+          color: Colors.white,
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+        isDense: true,
+        borderRadius: BorderRadius.circular(5.0),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      isDense: true,
-      borderRadius: BorderRadius.circular(5.0),
     );
   }
 
@@ -106,8 +114,8 @@ class GameControls extends StatelessWidget {
       value: difficulty,
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: 24.0,
-          vertical: 12.0,
+          horizontal: 16.0,
+          vertical: 8.0,
         ),
         child: Text(
           text,
@@ -121,19 +129,25 @@ class GameControls extends StatelessWidget {
     );
   }
 
+  // Common button style for all buttons
+  ButtonStyle get _commonButtonStyle => ElevatedButton.styleFrom(
+    backgroundColor: Colors.black, // Black background
+    foregroundColor: Colors.white, // White text
+    padding: const EdgeInsets.symmetric(
+      horizontal: 24.0,
+      vertical: 12.0,
+    ),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(5.0),
+      side: const BorderSide(color: Colors.white, width: 1.0), // White border
+    ),
+    elevation: 0, // No shadow
+  );
+  
   Widget _buildResetButton() {
     return ElevatedButton(
       onPressed: onReset,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.resetButtonColor,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 24.0,
-          vertical: 12.0,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-      ),
+      style: _commonButtonStyle,
       child: const Text(
         'Reset',
         style: TextStyle(
@@ -147,16 +161,7 @@ class GameControls extends StatelessWidget {
   Widget _buildSolutionButton() {
     return ElevatedButton(
       onPressed: onSolution,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.solutionButtonColor,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 24.0,
-          vertical: 12.0,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-      ),
+      style: _commonButtonStyle,
       child: const Text(
         'Solution',
         style: TextStyle(
@@ -170,16 +175,7 @@ class GameControls extends StatelessWidget {
   Widget _buildNextButton() {
     return ElevatedButton(
       onPressed: onNextColor,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primaryButtonColor,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 24.0,
-          vertical: 12.0,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-      ),
+      style: _commonButtonStyle,
       child: const Text(
         'Next',
         style: TextStyle(
