@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:confetti/confetti.dart';
 
-class ColorDisplay extends StatelessWidget {
+const double globalAspectRatio = 0.5;
+
+class ColorDisplay extends StatefulWidget {
   final Color yourMixColor;
   final Color targetColor;
   final double matchPercentage;
@@ -17,31 +20,62 @@ class ColorDisplay extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<ColorDisplay> createState() => _ColorDisplayState();
+}
+
+class _ColorDisplayState extends State<ColorDisplay> {
+  late ConfettiController _confettiController;
+  bool _previousSuccessState = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _confettiController = ConfettiController(duration: const Duration(seconds: 3));
+  }
+
+  @override
+  void didUpdateWidget(ColorDisplay oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    
+    // If success message just became visible, play the confetti animation
+    if (widget.showSuccessMessage && !_previousSuccessState) {
+      _confettiController.play();
+    }
+    
+    _previousSuccessState = widget.showSuccessMessage;
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Row(
+    return Stack(
       children: [
-        // Your Mix Display
-        Expanded(
-          child: AspectRatio(
-            aspectRatio: 1.0,
-            child: Container(
+        // Main content
+        Row(
+          children: [
+            // Your Mix Display
+            Expanded(
+              child: AspectRatio(
+                aspectRatio: globalAspectRatio,
+                child: Container(
               decoration: BoxDecoration(
-                color: yourMixColor == Colors.transparent 
+                color: widget.yourMixColor == Colors.transparent 
                     ? null 
-                    : yourMixColor,
-                borderRadius: BorderRadius.circular(6.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    offset: const Offset(0, 1),
-                    blurRadius: 3.0,
-                  ),
-                ],
-                // Pattern for transparent mix
-                image: yourMixColor == Colors.transparent
-                    ? const DecorationImage(
-                        image: AssetImage('assets/images/transparent_bg.png'),
-                        repeat: ImageRepeat.repeat,
+                    : widget.yourMixColor,
+                // Use a gradient for checkerboard pattern when transparent
+                gradient: widget.yourMixColor == Colors.transparent
+                    ? LinearGradient(
+                        colors: [
+                          Colors.grey.withOpacity(0.2),
+                          Colors.grey.withOpacity(0.1),
+                        ],
+                        tileMode: TileMode.repeated,
+                        stops: const [0.0, 0.5],
                       )
                     : null,
               ),
@@ -68,13 +102,13 @@ class ColorDisplay extends StatelessWidget {
                       ),
                       const SizedBox(height: 5.0),
                       Text(
-                        'Match: ${matchPercentage.toStringAsFixed(1)}%',
+                        'Match: ${widget.matchPercentage.toStringAsFixed(1)}%',
                         style: const TextStyle(
                           fontSize: 14.0,
                           color: Color(0xFF333333),
                         ),
                       ),
-                      if (showSuccessMessage) ...[
+                      if (widget.showSuccessMessage) ...[
                         const SizedBox(height: 5.0),
                         const Text(
                           'Great Job!',
@@ -85,7 +119,7 @@ class ColorDisplay extends StatelessWidget {
                           ),
                         ),
                       ],
-                      if (showSolutionMessage) ...[
+                      if (widget.showSolutionMessage) ...[
                         const SizedBox(height: 5.0),
                         const Text(
                           'Solution Applied',
@@ -103,24 +137,14 @@ class ColorDisplay extends StatelessWidget {
             ),
           ),
         ),
-        
-        const SizedBox(width: 16.0),
-        
+
         // Target Color Display
         Expanded(
           child: AspectRatio(
-            aspectRatio: 1.0,
+            aspectRatio: globalAspectRatio,
             child: Container(
               decoration: BoxDecoration(
-                color: targetColor,
-                borderRadius: BorderRadius.circular(6.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    offset: const Offset(0, 1),
-                    blurRadius: 3.0,
-                  ),
-                ],
+                color: widget.targetColor,
               ),
               child: Center(
                 child: Container(
@@ -143,6 +167,30 @@ class ColorDisplay extends StatelessWidget {
                 ),
               ),
             ),
+          ),
+        ),
+        
+        // Confetti celebration overlay
+        Align(
+          alignment: Alignment.center,
+          child: ConfettiWidget(
+            confettiController: _confettiController,
+            blastDirectionality: BlastDirectionality.explosive, // Blast in all directions
+            emissionFrequency: 0.05, // How often it emits particles
+            numberOfParticles: 20, // Number of particles to emit
+            maxBlastForce: 20, // Max blast force
+            minBlastForce: 5, // Min blast force
+            gravity: 0.2, // Gravity of particles
+            
+            // Use different colors for confetti pieces
+            colors: const [
+              Colors.red,
+              Colors.blue,
+              Colors.green,
+              Colors.yellow,
+              Colors.purple,
+              Colors.orange,
+            ],
           ),
         ),
       ],

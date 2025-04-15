@@ -13,41 +13,19 @@ class GameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorGame = Provider.of<ColorGame>(context);
-    
+
     return Scaffold(
       // Removed AppBar
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                // Game title at the top
-                const Padding(
-                  padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
-                  child: Text(
-                    'Color Mixer Game',
-                    style: TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF333333),
-                    ),
-                  ),
-                ),
-                
                 Container(
-                  width: double.infinity,
+                  width: double.infinity,          
                   padding: const EdgeInsets.all(20.0),
                   decoration: BoxDecoration(
                     color: AppColors.gameContainerColor,
-                    borderRadius: BorderRadius.circular(8.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.15),
-                        offset: const Offset(0, 4),
-                        blurRadius: 12.0,
-                      ),
-                    ],
+
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -60,9 +38,9 @@ class GameScreen extends StatelessWidget {
                         showSuccessMessage: colorGame.showSuccessMessage,
                         showSolutionMessage: colorGame.showSolutionMessage,
                       ),
-                      
+
                       const SizedBox(height: 24.0),
-                      
+
                       // Color Palette Section
                       ColorPalette(
                         visibleColorsCount: colorGame.visibleColorsCount,
@@ -74,9 +52,9 @@ class GameScreen extends StatelessWidget {
                         onColorAdd: (index) => colorGame.addColor(index),
                         onColorRemove: (index) => colorGame.removeColor(index),
                       ),
-                      
+
                       const SizedBox(height: 24.0),
-                      
+
                       // Game Controls Section with difficulty button
                       GameControls(
                         onReset: () => colorGame.resetMix(),
@@ -91,7 +69,6 @@ class GameScreen extends StatelessWidget {
                 ),
               ],
             ),
-          ),
         ),
       ),
     );
