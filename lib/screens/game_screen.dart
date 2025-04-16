@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:color_mixer_game/constants/app_colors.dart';
-import 'package:color_mixer_game/constants/difficulty_settings.dart';
 import 'package:color_mixer_game/models/color_game.dart';
 import 'package:color_mixer_game/widgets/color_display.dart';
 import 'package:color_mixer_game/widgets/color_palette.dart';
@@ -23,7 +22,7 @@ class GameScreen extends StatelessWidget {
                 Container(
                   width: double.infinity,          
                   padding: const EdgeInsets.all(20.0),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColors.gameContainerColor,
 
                   ),

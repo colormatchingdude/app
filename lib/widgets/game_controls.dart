@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:color_mixer_game/constants/app_colors.dart';
 import 'package:color_mixer_game/constants/difficulty_settings.dart';
 
 class GameControls extends StatelessWidget {
@@ -85,8 +84,8 @@ class GameControls extends StatelessWidget {
             isExpanded: true,
             items: [
               _buildDropdownItem(DifficultyLevel.easy, 'Easy'),
-              _buildDropdownItem(DifficultyLevel.medium, 'Medium'),
-              _buildDropdownItem(DifficultyLevel.hard, 'Hard'),
+              _buildDropdownItem(DifficultyLevel.medium, 'Okay'),
+              _buildDropdownItem(DifficultyLevel.hard, 'OMG'),
             ],
             style: const TextStyle(
               fontSize: 16.0,

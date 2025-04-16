@@ -63,111 +63,113 @@ class _ColorDisplayState extends State<ColorDisplay> {
               child: AspectRatio(
                 aspectRatio: globalAspectRatio,
                 child: Container(
-              decoration: BoxDecoration(
-                color: widget.yourMixColor == Colors.transparent 
-                    ? null 
-                    : widget.yourMixColor,
-                // Use a gradient for checkerboard pattern when transparent
-                gradient: widget.yourMixColor == Colors.transparent
-                    ? LinearGradient(
-                        colors: [
-                          Colors.grey.withOpacity(0.2),
-                          Colors.grey.withOpacity(0.1),
-                        ],
-                        tileMode: TileMode.repeated,
-                        stops: const [0.0, 0.5],
-                      )
-                    : null,
-              ),
-              child: Center(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 8.0,
-                    horizontal: 15.0,
-                  ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.6),
-                    borderRadius: BorderRadius.circular(4.0),
+                    color: widget.yourMixColor == Colors.transparent 
+                        ? null 
+                        : widget.yourMixColor,
+                    // Use a gradient for checkerboard pattern when transparent
+                    gradient: widget.yourMixColor == Colors.transparent
+                        ? LinearGradient(
+                            colors: [
+                              Colors.grey.withOpacity(0.2),
+                              Colors.grey.withOpacity(0.1),
+                            ],
+                            tileMode: TileMode.repeated,
+                            stops: const [0.0, 0.5],
+                          )
+                        : null,
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'Your Mix',
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8.0,
+                        horizontal: 15.0,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'Your Mix',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF333333),
+                            ),
+                          ),
+                          const SizedBox(height: 5.0),
+                          Text(
+                            'Match: ${widget.matchPercentage.toStringAsFixed(1)}%',
+                            style: const TextStyle(
+                              fontSize: 14.0,
+                              color: Color(0xFF333333),
+                            ),
+                          ),
+                          if (widget.showSuccessMessage) ...[
+                            const SizedBox(height: 5.0),
+                            const Text(
+                              'Great Job!',
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF28A745),
+                              ),
+                            ),
+                          ],
+                          if (widget.showSolutionMessage) ...[
+                            const SizedBox(height: 5.0),
+                            const Text(
+                              'Solution Applied',
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF007BFF),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            // Target Color Display
+            Expanded(
+              child: AspectRatio(
+                aspectRatio: globalAspectRatio,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: widget.targetColor,
+                  ),
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8.0,
+                        horizontal: 15.0,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                      child: const Text(
+                        'Target',
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF333333),
                         ),
                       ),
-                      const SizedBox(height: 5.0),
-                      Text(
-                        'Match: ${widget.matchPercentage.toStringAsFixed(1)}%',
-                        style: const TextStyle(
-                          fontSize: 14.0,
-                          color: Color(0xFF333333),
-                        ),
-                      ),
-                      if (widget.showSuccessMessage) ...[
-                        const SizedBox(height: 5.0),
-                        const Text(
-                          'Great Job!',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF28A745),
-                          ),
-                        ),
-                      ],
-                      if (widget.showSolutionMessage) ...[
-                        const SizedBox(height: 5.0),
-                        const Text(
-                          'Solution Applied',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF007BFF),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-
-        // Target Color Display
-        Expanded(
-          child: AspectRatio(
-            aspectRatio: globalAspectRatio,
-            child: Container(
-              decoration: BoxDecoration(
-                color: widget.targetColor,
-              ),
-              child: Center(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 8.0,
-                    horizontal: 15.0,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.6),
-                    borderRadius: BorderRadius.circular(4.0),
-                  ),
-                  child: const Text(
-                    'Target',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF333333),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
+          ],
         ),
         
         // Confetti celebration overlay

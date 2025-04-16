@@ -17,8 +17,8 @@ class DifficultySelector extends StatelessWidget {
       onSelected: onDifficultySelected,
       itemBuilder: (context) => [
         _buildMenuItem(context, DifficultyLevel.easy, 'Easy'),
-        _buildMenuItem(context, DifficultyLevel.medium, 'Medium'),
-        _buildMenuItem(context, DifficultyLevel.hard, 'Hard'),
+        _buildMenuItem(context, DifficultyLevel.medium, 'Okay'),
+        _buildMenuItem(context, DifficultyLevel.hard, 'OMG'),
       ],
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -71,11 +71,11 @@ class DifficultySelector extends StatelessWidget {
       case DifficultyLevel.easy:
         return 'Easy';
       case DifficultyLevel.medium:
-        return 'Medium';
+        return 'Okay';
       case DifficultyLevel.hard:
-        return 'Hard';
+        return 'OMG';
       default:
-        return 'Medium';
+        return 'Easy';
     }
   }
 }
