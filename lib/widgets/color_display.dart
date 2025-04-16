@@ -8,7 +8,6 @@ class ColorDisplay extends StatefulWidget {
   final Color targetColor;
   final double matchPercentage;
   final bool showSuccessMessage;
-  final bool showSolutionMessage;
 
   const ColorDisplay({
     Key? key,
@@ -16,7 +15,6 @@ class ColorDisplay extends StatefulWidget {
     required this.targetColor,
     required this.matchPercentage,
     required this.showSuccessMessage,
-    required this.showSolutionMessage,
   }) : super(key: key);
 
   @override
@@ -108,28 +106,6 @@ class _ColorDisplayState extends State<ColorDisplay> {
                               color: Color(0xFF333333),
                             ),
                           ),
-                          if (widget.showSuccessMessage) ...[
-                            const SizedBox(height: 5.0),
-                            const Text(
-                              'Great Job!',
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF28A745),
-                              ),
-                            ),
-                          ],
-                          if (widget.showSolutionMessage) ...[
-                            const SizedBox(height: 5.0),
-                            const Text(
-                              'Solution Applied',
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF007BFF),
-                              ),
-                            ),
-                          ],
                         ],
                       ),
                     ),

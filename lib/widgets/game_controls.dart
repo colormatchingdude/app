@@ -162,7 +162,7 @@ class GameControls extends StatelessWidget {
       onPressed: onSolution,
       style: _commonButtonStyle,
       child: const Text(
-        'Solution',
+        'Hint',
         style: TextStyle(
           fontSize: 16.0,
           fontWeight: FontWeight.w500,

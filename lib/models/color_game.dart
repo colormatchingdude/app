@@ -28,10 +28,6 @@ class ColorGame extends ChangeNotifier {
   bool _showSuccessMessage = false;
   bool get showSuccessMessage => _showSuccessMessage;
 
-  // Solution message flag
-  bool _showSolutionMessage = false;
-  bool get showSolutionMessage => _showSolutionMessage;
-
   // Current mixed color
   Color _currentMixedColor = Colors.transparent;
   Color get currentMixedColor => _currentMixedColor;
@@ -76,7 +72,6 @@ class ColorGame extends ChangeNotifier {
     _currentMixedColor = Colors.transparent;
     _matchPercentage = 0;
     _showSuccessMessage = false;
-    _showSolutionMessage = false;
     notifyListeners();
   }
 
@@ -131,24 +126,34 @@ class ColorGame extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Show solution
   void showSolution() {
-    // Copy target ratios to current amounts
+    // Find indices of non-zero target color ratios
+    List<int> nonZeroIndices = [];
     for (int i = 0; i < _targetColorRatios.length; i++) {
-      _colorAmounts[i] = _targetColorRatios[i];
+      if (_targetColorRatios[i] != 0) {
+        nonZeroIndices.add(i);
+      }
     }
-    
+
+    // Shuffle and select half of the non-zero indices
+    nonZeroIndices.shuffle();
+    int halfCount = (nonZeroIndices.length / 2).ceil();
+    Set<int> revealedIndices = nonZeroIndices.take(halfCount).toSet();
+
+    // Update _colorAmounts accordingly
+    for (int i = 0; i < _targetColorRatios.length; i++) {
+      if (revealedIndices.contains(i)) {
+        _colorAmounts[i] = _targetColorRatios[i];
+      } else {
+        _colorAmounts[i] = 0;
+      }
+    }
+
     _updateMixedColor();
-    _showSolutionMessage = true;
-    
-    // Hide solution message after 3 seconds
-    Future.delayed(const Duration(seconds: 3), () {
-      _showSolutionMessage = false;
-      notifyListeners();
-    });
-    
     notifyListeners();
   }
+
+
 
   // Update mixed color and match percentage
   void _updateMixedColor() {

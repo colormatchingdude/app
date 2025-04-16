@@ -35,7 +35,6 @@ class GameScreen extends StatelessWidget {
                         targetColor: colorGame.targetColor,
                         matchPercentage: colorGame.matchPercentage,
                         showSuccessMessage: colorGame.showSuccessMessage,
-                        showSolutionMessage: colorGame.showSolutionMessage,
                       ),
 
                       const SizedBox(height: 24.0),
