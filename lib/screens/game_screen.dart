@@ -14,59 +14,51 @@ class GameScreen extends StatelessWidget {
     final colorGame = Provider.of<ColorGame>(context);
 
     return Scaffold(
-      // Removed AppBar
       body: SafeArea(
-        child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  width: double.infinity,          
-                  padding: const EdgeInsets.all(20.0),
-                  decoration: const BoxDecoration(
-                    color: AppColors.gameContainerColor,
+        child: Container(
+          width: double.infinity,
+          color: AppColors.gameContainerColor,
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              // Top: Color Display (fixed size)
+              ColorDisplay(
+                yourMixColor: colorGame.currentMixedColor,
+                targetColor: colorGame.targetColor,
+                matchPercentage: colorGame.matchPercentage,
+                showSuccessMessage: colorGame.showSuccessMessage,
+              ),
 
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Color Display Section
-                      ColorDisplay(
-                        yourMixColor: colorGame.currentMixedColor,
-                        targetColor: colorGame.targetColor,
-                        matchPercentage: colorGame.matchPercentage,
-                        showSuccessMessage: colorGame.showSuccessMessage,
-                      ),
+              const SizedBox(height: 16.0),
 
-                      const SizedBox(height: 24.0),
+              // Spacer: absorbs available vertical space between top and bottom
+              const Spacer(),
 
-                      // Color Palette Section
-                      ColorPalette(
-                        visibleColorsCount: colorGame.visibleColorsCount,
-                        colorAmounts: colorGame.colorAmounts,
-                        colorPercentages: List.generate(
-                          AppColors.baseColors.length, 
-                          (i) => colorGame.getColorPercentage(i),
-                        ),
-                        onColorAdd: (index) => colorGame.addColor(index),
-                        onColorRemove: (index) => colorGame.removeColor(index),
-                      ),
-
-                      const SizedBox(height: 24.0),
-
-                      // Game Controls Section with difficulty button
-                      GameControls(
-                        onReset: () => colorGame.resetMix(),
-                        onSolution: () => colorGame.showSolution(),
-                        onNextColor: () => colorGame.generateTargetColor(),
-                        // Added difficulty info
-                        currentDifficulty: colorGame.currentDifficulty,
-                        onDifficultySelected: (difficulty) => colorGame.setDifficulty(difficulty),
-                      ),
-                    ],
-                  ),
+              // Middle: Color Palette
+              ColorPalette(
+                visibleColorsCount: colorGame.visibleColorsCount,
+                colorAmounts: colorGame.colorAmounts,
+                colorPercentages: List.generate(
+                  AppColors.baseColors.length,
+                  (i) => colorGame.getColorPercentage(i),
                 ),
-              ],
-            ),
+                onColorAdd: (index) => colorGame.addColor(index),
+                onColorRemove: (index) => colorGame.removeColor(index),
+              ),
+
+              const SizedBox(height: 24.0),
+
+              // Bottom: Game Controls
+              GameControls(
+                onReset: () => colorGame.resetMix(),
+                onSolution: () => colorGame.showSolution(),
+                onNextColor: () => colorGame.generateTargetColor(),
+                currentDifficulty: colorGame.currentDifficulty,
+                onDifficultySelected: (difficulty) =>
+                    colorGame.setDifficulty(difficulty),
+              ),
+            ],
+          ),
         ),
       ),
     );
