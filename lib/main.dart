@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => ColorGame(),
       child: MaterialApp(
-        title: 'Color Mixer Game',
+        title: 'ColorMix',
         theme: ThemeData(
           primarySwatch: Colors.blue,
           fontFamily: 'Roboto',
