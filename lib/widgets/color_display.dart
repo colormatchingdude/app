@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
+import 'package:color_mixer_game/widgets/help_dialog.dart';
 
 const double globalAspectRatio = 0.5;
 
@@ -34,12 +35,12 @@ class _ColorDisplayState extends State<ColorDisplay> {
   @override
   void didUpdateWidget(ColorDisplay oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     // If success message just became visible, play the confetti animation
     if (widget.showSuccessMessage && !_previousSuccessState) {
       _confettiController.play();
     }
-    
+
     _previousSuccessState = widget.showSuccessMessage;
   }
 
@@ -48,6 +49,22 @@ class _ColorDisplayState extends State<ColorDisplay> {
     _confettiController.dispose();
     super.dispose();
   }
+
+  Widget _buildHelpDialog(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Help'),
+      content: const Text('This is a help dialog.'),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('Close'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +79,8 @@ class _ColorDisplayState extends State<ColorDisplay> {
                 aspectRatio: globalAspectRatio,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: widget.yourMixColor == Colors.transparent 
-                        ? null 
+                    color: widget.yourMixColor == Colors.transparent
+                        ? null
                         : widget.yourMixColor,
                     // Use a gradient for checkerboard pattern when transparent
                     gradient: widget.yourMixColor == Colors.transparent
@@ -122,32 +139,61 @@ class _ColorDisplayState extends State<ColorDisplay> {
                   decoration: BoxDecoration(
                     color: widget.targetColor,
                   ),
-                  child: Center(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8.0,
-                        horizontal: 15.0,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.6),
-                        borderRadius: BorderRadius.circular(4.0),
-                      ),
-                      child: const Text(
-                        'Target',
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF333333),
+                  child: Stack(
+                    children: [
+                      Center(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 8.0,
+                            horizontal: 15.0,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                          child: const Text(
+                            'Target',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF333333),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      Positioned(
+                        top: 8.0,
+                        right: 8.0,
+                        child: Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withOpacity(0.6),
+                          ),
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            iconSize: 18,
+                            icon: const Icon(Icons.help_outline),
+                            color: const Color(0xFF333333),
+                            onPressed: () {
+                              // Handle help button press
+                              showDialog(
+                                context: context,
+                                builder: (context) => const HelpDialog(),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
           ],
         ),
-        
+
         // Confetti celebration overlay
         Align(
           alignment: Alignment.center,
@@ -159,7 +205,7 @@ class _ColorDisplayState extends State<ColorDisplay> {
             maxBlastForce: 20, // Max blast force
             minBlastForce: 5, // Min blast force
             gravity: 0.2, // Gravity of particles
-            
+
             // Use different colors for confetti pieces
             colors: const [
               Colors.red,
