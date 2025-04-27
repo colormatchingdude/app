@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
 import 'package:color_mixer_game/widgets/help_dialog.dart';
 
-const double globalAspectRatio = 0.5;
+const double globalAspectRatio = 0.6;
 
 class ColorDisplay extends StatefulWidget {
   final Color yourMixColor;

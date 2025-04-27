@@ -72,7 +72,7 @@ class GameControls extends StatelessWidget {
         borderRadius: BorderRadius.circular(5.0),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0),
         child: DropdownButtonHideUnderline(
           child: DropdownButton<DifficultyLevel>(
             value: currentDifficulty,
@@ -97,7 +97,7 @@ class GameControls extends StatelessWidget {
               Icons.arrow_drop_down,
               color: Colors.white,
             ),
-            iconSize: 24.0,
+            iconSize: 13.0,
             alignment: Alignment.center,
           ),
         ),
